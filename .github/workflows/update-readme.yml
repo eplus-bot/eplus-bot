@@ -9,15 +9,11 @@ jobs:
   update-readme-with-blog:
     name: Update this repo's README with latest blog posts
     runs-on: ubuntu-latest
-    environment: 
-      name: production
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Pull in eplus.dev posts
-        uses: ePlus-DEV/blog-post-workflow@v1.0.0
+        uses: ePlus-DEV/blog-post-workflow@v1.0.1
         with:
           retry_count: 2
           feed_list: "https://eplus.dev/rss.xml"
@@ -27,32 +23,4 @@ jobs:
           rand_seed: "hoangsvit"
           date_format: 'UTC: yyyy-mm-dd'
           template: "- $randomEmoji(💯,🔥,💫,🚀,🌮,📝,🥳,💻,🧰,🏊,🥰,🧐,🤓,😎,🥸,🤩,🤗,🤔,🫣,🤭,🤠,👹,👺,🤡,🤖,🎃,😺,🫶,👍,💪,💄,👀,🧠,🧑‍🏫,👨‍🏫,💂,🧑‍💻,🥷,💃,🕴,💼,🎓,🐻,🐵,🙉,🦄,🦆,🦅,🦍,🦣,🐘,🦒,🦏,🐎,🦩,🐲,🌝,🌜,🌏,🌈,🌊,🎬,🎭,🚀,🚦,⛽️,🗽,🎡,🌋,🌁,💡,🕯,🪜,🧰,⚗️,🔭,🪄,🎊,🎉) [$title]($url) -$date $newline"
-
-  update-weather:
-    permissions: write-all
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
-        with:
-          go-version: '1.21.0'
-      - name: Prepare
-        run: |
-          export PATH=$PATH:$(go env GOPATH)/bin
-          mkdir .tmp
-      - name: Collect weathers
-        run: |
-          go install github.com/ePlus-DEV/weather-forecast@v1.0.7
-          weather-forecast update-weather --days=3 --city="Ho Chi Minh City" --weather-api-key="${{ secrets.WEATHER_API_KEY }}" --template-file='templates/weathers.md.tpl' --out-file='.tmp/weathers.md.tpl'
-      - name: Merge templates
-        run: |
-          git pull
-          go install github.com/ePlus-DEV/merge-templates@v1.0.1
-          merge-templates README.md 'templates/README.md.tpl' '.tmp/weathers.md.tpl'
-      - name: Commit
-        run: |
-          git config user.name "David Nguyen"
-          git config user.email h250694@gmail.com
-          git add .
-          git commit -m "update README.md ($(TZ="Asia/Ho_Chi_Minh" date +'%Y-%m-%d %H:%M:%S'))"
-          git push origin main
+          max_post_count: 15
